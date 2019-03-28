@@ -1,0 +1,26 @@
+---
+# tasks file for donfilemon.named
+- name: Install Packges 
+  yum:
+    name: "{{ packages }}"
+    update_cache: yes
+  vars:
+    packages:
+    - bind
+    - bind-utils
+- name: Copy named.conf file
+  template: 
+    src: named.conf.j2 
+    dest: /etc/named.conf
+    backup: yes
+  register: conf
+- name: Start service named if not started and enable autostart 
+  service:
+    name: named
+    state: started
+    enabled: yes
+- name: Restart service ntpd, in all cases
+  service:
+    name: named
+    state: restarted
+  when: conf.changed
