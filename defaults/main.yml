@@ -7,5 +7,14 @@ dnssec-enable: no
 dnssec-validation: no
 allow-network: localhost;192.168.227.0/24;
 slave-server: 192.168.12.6;
-domain_IN: zszik.pl. 
+# FORWARD ZONE
+forward_zone: zszik.pl. 
+forward_zone_DNS_type: master
+forward_zone_update: none
+# REVERSE ZONE
+reverse_zone: 12.168.192.in-addr.arpa
+reverse_zone_DNS_type: master
+reverse_zone_update: none
+
+
 

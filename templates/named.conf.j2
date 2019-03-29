@@ -52,9 +52,16 @@ logging {
         };
 };
 
-zone "{{ domain_IN }}" IN {
-        type hint;
-        file "{{ domain_IN }}.local.db";
+zone "{{ forward_zone}}" IN {
+        type {{ forward zone_DNS_type }};
+        file "{{ forward_zone }}.local.db";
+        allow-update { {{ forward_zone_update }}; };
+};
+
+zone "{{ reverse_zone }}" IN {
+type {{ reverse_zone_DNS_type }};
+file "{{ reverse_zone }}.db";
+allow-update { {{ reverse_zone_update }}; };
 };
 
 include "/etc/named.rfc1912.zones";
