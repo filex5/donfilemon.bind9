@@ -10,15 +10,16 @@
 // configuration located in /usr/share/doc/bind-{version}/Bv9ARM.html
 
 options {
-        listen-on port 53 { 127.0.0.1; };
-        listen-on-v6 port 53 { ::1; };
+        listen-on port 53 { {{  listen_on_ip  }}; };
+        listen-on-v6 port 53 { {{ listen_on_ipv6 }}; };
         directory       "/var/named";
         dump-file       "/var/named/data/cache_dump.db";
         statistics-file "/var/named/data/named_stats.txt";
         memstatistics-file "/var/named/data/named_mem_stats.txt";
         recursing-file  "/var/named/data/named.recursing";
         secroots-file   "/var/named/data/named.secroots";
-        allow-query     { localhost; };
+        allow-query     { {{ allow-network }}; };
+        allow-transfer { {{ slave-server }} };
 
         /*
          - If you are building an AUTHORITATIVE DNS server, do NOT enable recursion.
@@ -30,10 +31,10 @@ options {
            attacks. Implementing BCP38 within your network would greatly
            reduce such attack surface
         */
-        recursion yes;
+        recursion {{ recursion }};
 
-        dnssec-enable yes;
-        dnssec-validation yes;
+        dnssec-enable {{ dnssec-enable }};
+        dnssec-validation {{ dnssec-validation }};
 
         /* Path to ISC DLV key */
         bindkeys-file "/etc/named.iscdlv.key";
@@ -51,9 +52,9 @@ logging {
         };
 };
 
-zone "." IN {
+zone "{{ domain_IN }}" IN {
         type hint;
-        file "named.ca";
+        file "{{ domain_IN }}.local.db";
 };
 
 include "/etc/named.rfc1912.zones";
