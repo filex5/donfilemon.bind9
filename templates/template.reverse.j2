@@ -18,8 +18,8 @@ options {
         memstatistics-file "/var/named/data/named_mem_stats.txt";
         recursing-file  "/var/named/data/named.recursing";
         secroots-file   "/var/named/data/named.secroots";
-        allow-query     { {{ allow_network }}; };
-        allow-transfer { {{ slave_server }} };
+        allow-query     { {{ allow-network }}; };
+        allow-transfer { {{ slave-server }} };
 
         /*
          - If you are building an AUTHORITATIVE DNS server, do NOT enable recursion.
@@ -33,8 +33,8 @@ options {
         */
         recursion {{ recursion }};
 
-        dnssec-enable {{ dnssec_enable }};
-        dnssec-validation {{ dnssec_validation }};
+        dnssec-enable {{ dnssec-enable }};
+        dnssec-validation {{ dnssec-validation }};
 
         /* Path to ISC DLV key */
         bindkeys-file "/etc/named.iscdlv.key";
@@ -52,17 +52,17 @@ logging {
         };
 };
 
-zone "{{ forward_zone }}" IN {
-        type {{ forward_zone_DNS_type }};
-        file "{{ forward_zone }}db";
+zone "{{ forward_zone}}" IN {
+        type {{ forward zone_DNS_type }};
+        file "{{ forward_zone }}.local.db";
         allow-update { {{ forward_zone_update }}; };
 };
 
-# zone "{{ reverse_zone }}" IN {
-# type {{ reverse_zone_DNS_type }};
-# file "/etc/named/{{ reverse_zone }}db";
-# allow-update { {{ reverse_zone_update }}; };
-# };
+zone "{{ reverse_zone }}" IN {
+type {{ reverse_zone_DNS_type }};
+file "{{ reverse_zone }}.db";
+allow-update { {{ reverse_zone_update }}; };
+};
 
 include "/etc/named.rfc1912.zones";
 include "/etc/named.root.key";

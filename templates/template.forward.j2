@@ -1,0 +1,16 @@
+;
+; BIND data file for linuxconfig.org
+;
+$TTL    3h
+@       IN      SOA       {{ forward_zone }} admin.{{ forward_zone }} (
+                          1        ; Serial
+                          3h       ; Refresh after 3 hours
+                          1h       ; Retry after 1 hour
+                          1w       ; Expire after 1 week
+                          1h )     ; Negative caching TTL of 1 day
+;
+
+@       IN      NS      filemon.local.
+@       IN      A       127.0.0.1
+computer1           IN      A       192.168.227.140
+
