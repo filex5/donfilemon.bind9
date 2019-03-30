@@ -1,6 +1,6 @@
 ---
 # defaults file for donfilemon.named
-listen_on_ip: 192.168.227.0
+listen_on_ip: 127.0.0.1; 192.168.227.130;    # use ; on end of ip adress example 127.0.0.1;
 listen_on_ipv6: ::1
 recursion: yes
 dnssec_enable: no

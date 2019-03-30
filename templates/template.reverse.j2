@@ -1,69 +1,21 @@
-//
-// named.conf
-//
-// Provided by Red Hat bind package to configure the ISC BIND named(8) DNS
-// server as a caching only nameserver (as a localhost DNS resolver only).
-//
-// See /usr/share/doc/bind*/sample/ for example named configuration files.
-//
-// See the BIND Administrator's Reference Manual (ARM) for details about the
-// configuration located in /usr/share/doc/bind-{version}/Bv9ARM.html
+;
+; BIND data file for linuxconfig.org
+;
+$TTL    3h
+@       IN      SOA       masterdns.{{ forward_zone }} admin.{{ forward_zone }} (
+                          1        ; Serial
+                          3h       ; Refresh after 3 hours
+                          1h       ; Retry after 1 hour
+                          1w       ; Expire after 1 week
+                          1h )     ; Negative caching TTL of 1 day
+;
 
-options {
-        listen-on port 53 { {{  listen_on_ip  }}; };
-        listen-on-v6 port 53 { {{ listen_on_ipv6 }}; };
-        directory       "/var/named";
-        dump-file       "/var/named/data/cache_dump.db";
-        statistics-file "/var/named/data/named_stats.txt";
-        memstatistics-file "/var/named/data/named_mem_stats.txt";
-        recursing-file  "/var/named/data/named.recursing";
-        secroots-file   "/var/named/data/named.secroots";
-        allow-query     { {{ allow-network }}; };
-        allow-transfer { {{ slave-server }} };
-
-        /*
-         - If you are building an AUTHORITATIVE DNS server, do NOT enable recursion.
-         - If you are building a RECURSIVE (caching) DNS server, you need to enable
-           recursion.
-         - If your recursive DNS server has a public IP address, you MUST enable access
-           control to limit queries to your legitimate users. Failing to do so will
-           cause your server to become part of large scale DNS amplification
-           attacks. Implementing BCP38 within your network would greatly
-           reduce such attack surface
-        */
-        recursion {{ recursion }};
-
-        dnssec-enable {{ dnssec-enable }};
-        dnssec-validation {{ dnssec-validation }};
-
-        /* Path to ISC DLV key */
-        bindkeys-file "/etc/named.iscdlv.key";
-
-        managed-keys-directory "/var/named/dynamic";
-
-        pid-file "/run/named/named.pid";
-        session-keyfile "/run/named/session.key";
-};
-
-logging {
-        channel default_debug {
-                file "data/named.run";
-                severity dynamic;
-        };
-};
-
-zone "{{ forward_zone}}" IN {
-        type {{ forward zone_DNS_type }};
-        file "{{ forward_zone }}.local.db";
-        allow-update { {{ forward_zone_update }}; };
-};
-
-zone "{{ reverse_zone }}" IN {
-type {{ reverse_zone_DNS_type }};
-file "{{ reverse_zone }}.db";
-allow-update { {{ reverse_zone_update }}; };
-};
-
-include "/etc/named.rfc1912.zones";
-include "/etc/named.root.key";
-
+@       IN  NS          masterdns.{{ forward_zone }}
+@       IN  NS          secondarydns.{{ forward_zone }}
+@       IN  PTR         {{ forward_zone }}
+masterdns       IN  A   192.168.277.130
+secondarydns    IN  A   192.168.277.150
+client          IN  A   192.168.277.140
+130     IN  PTR         masterdns.{{ forward_zone }}
+150     IN  PTR         secondarydns.{{ forward_zone }}
+140     IN  PTR         client.unixmen.{{ forward_zone }}

@@ -10,7 +10,7 @@
 // configuration located in /usr/share/doc/bind-{version}/Bv9ARM.html
 
 options {
-        listen-on port 53 { {{  listen_on_ip  }}; };
+        listen-on port 53 { {{  listen_on_ip  }} };               ### Master DNS IP ###
         listen-on-v6 port 53 { {{ listen_on_ipv6 }}; };
         directory       "/var/named";
         dump-file       "/var/named/data/cache_dump.db";
@@ -18,8 +18,8 @@ options {
         memstatistics-file "/var/named/data/named_mem_stats.txt";
         recursing-file  "/var/named/data/named.recursing";
         secroots-file   "/var/named/data/named.secroots";
-        allow-query     { {{ allow_network }}; };
-        allow-transfer { {{ slave_server }} };
+        allow-query     { {{ allow_network }}; };                   ### IP Range ###
+        allow-transfer { {{ slave_server }} };                      ### Slave DNS IP ###
 
         /*
          - If you are building an AUTHORITATIVE DNS server, do NOT enable recursion.
@@ -52,6 +52,11 @@ logging {
         };
 };
 
+zone "." IN {
+    type hint;
+    file "named.ca";
+};
+
 zone "{{ forward_zone }}" IN {
         type {{ forward_zone_DNS_type }};
         file "{{ forward_zone }}db";
@@ -60,7 +65,7 @@ zone "{{ forward_zone }}" IN {
 
 # zone "{{ reverse_zone }}" IN {
 # type {{ reverse_zone_DNS_type }};
-# file "/etc/named/{{ reverse_zone }}db";
+# file "/etc/named/reverse-{{ forward_zone }}db";
 # allow-update { {{ reverse_zone_update }}; };
 # };
 
