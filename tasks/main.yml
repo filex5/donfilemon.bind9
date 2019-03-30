@@ -13,19 +13,19 @@
     src: named.conf.j2 
     dest: /etc/named.conf
     backup: yes
-  register: nameconf
+  register: conf
 - name: Copy forward.zone file
   template: 
     src: template.forward.j2 
     dest: /var/named/{{ forward_zone }}db
     backup: yes
-  register: forwardzone
+  register: conf
 - name: Copy reverse.zone file
   template: 
     src: template.reverse.j2 
     dest: /var/named/reverse-{{ forward_zone }}db
     backup: yes
-  register: reversezone
+  register: conf
 - name: Start service named if not started and enable autostart 
   service:
     name: named
@@ -35,7 +35,7 @@
   service:
     name: named
     state: restarted
-  # when: conf.changed
+  when: conf.changed
 - name: Open TCP port of firewalld
   firewalld:
     port: 53/tcp
